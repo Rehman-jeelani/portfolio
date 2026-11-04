@@ -227,6 +227,15 @@ body {
   box-shadow: 0 6px 18px rgba(224, 83, 60, 0.28);
 }
 
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;

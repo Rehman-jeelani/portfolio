@@ -65,37 +65,84 @@ function initCopyEmail(data) {
 
 
 /**
- * Contact Form Handler
+ * Contact Form Handler (Direct Delivery to rehmanxjeelani@gmail.com via FormSubmit AJAX)
  */
 function initContactForm(data) {
   const form = document.getElementById("contact-form");
+  const submitBtn = document.getElementById("submit-btn");
+  const submitText = document.getElementById("submit-text");
   if (!form) return;
 
-  form.addEventListener("submit", (e) => {
+  const recipient = data.profile?.email || "rehmanxjeelani@gmail.com";
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("client-name")?.value.trim() || "";
-    const email = document.getElementById("client-email")?.value.trim() || "";
-    const service = document.getElementById("client-service")?.value || "Website Project";
-    const message = document.getElementById("client-message")?.value.trim() || "";
+    const nameInput = document.getElementById("client-name");
+    const emailInput = document.getElementById("client-email");
+    const serviceInput = document.getElementById("client-service");
+    const messageInput = document.getElementById("client-message");
+
+    const name = nameInput ? nameInput.value.trim() : "";
+    const email = emailInput ? emailInput.value.trim() : "";
+    const service = serviceInput ? serviceInput.value : "Business Website";
+    const message = messageInput ? messageInput.value.trim() : "";
 
     if (!name || !email) {
-      showToast("Please provide your name and email.");
+      showToast("Please provide both your name and email.");
       return;
     }
 
-    const recipient = data.profile?.email || "rehmanxjeelani@gmail.com";
-    const subject = encodeURIComponent(`Project Inquiry: ${service} — ${name}`);
-    const body = encodeURIComponent(
-      `Hello Abdul Rehman,\n\nName: ${name}\nEmail: ${email}\nService: ${service}\n\nProject Overview:\n${message}\n\nLooking forward to hearing from you.`
-    );
+    if (!message) {
+      showToast("Please share a brief note about your project.");
+      return;
+    }
 
-    showToast("Opening your email client to send message...");
-    setTimeout(() => {
-      window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
-    }, 600);
+    // Set UI loading state
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitText) submitText.textContent = "Sending Inquiry...";
 
-    form.reset();
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipient)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          _replyto: email,
+          service: service,
+          message: message,
+          _subject: `New Portfolio Inquiry: ${service} — ${name}`,
+          _template: "table",
+          _captcha: "false"
+        })
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (response.ok && (result.success === "true" || result.success === true || result.message)) {
+        showToast("Inquiry sent directly! Abdul Rehman will reply within 24 hours.");
+        form.reset();
+      } else {
+        const msg = result.message || "Failed to send message. Please try again or email directly.";
+        showToast(msg);
+      }
+    } catch (err) {
+      console.warn("AJAX submission encountered error, executing fallback:", err);
+      // Fallback: If network policy or adblocker blocks AJAX, perform standard form submission
+      showToast("Connecting to submission gateway...");
+      setTimeout(() => {
+        form.submit();
+      }, 700);
+      return;
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitText) submitText.textContent = "Send Project Inquiry";
+      if (window.lucide) window.lucide.createIcons();
+    }
   });
 }
 

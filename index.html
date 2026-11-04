@@ -817,7 +817,18 @@
                 Fill out this quick brief and I will reply directly via email.
               </p>
 
-              <form id="contact-form" class="space-y-5">
+              <form 
+                id="contact-form" 
+                action="https://formsubmit.co/rehmanxjeelani@gmail.com" 
+                method="POST" 
+                class="space-y-5"
+              >
+                <!-- Direct Delivery Configuration (FormSubmit.co) -->
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_subject" value="New Portfolio Inquiry — Abdul Rehman Jeelani">
+                <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label for="client-name" class="block font-display text-xs font-semibold text-[#141412] mb-1.5">
@@ -826,6 +837,7 @@
                     <input 
                       type="text" 
                       id="client-name" 
+                      name="name"
                       required 
                       placeholder="Jane Doe" 
                       class="clean-input"
@@ -838,6 +850,7 @@
                     <input 
                       type="email" 
                       id="client-email" 
+                      name="email"
                       required 
                       placeholder="jane@company.com" 
                       class="clean-input"
@@ -849,7 +862,7 @@
                   <label for="client-service" class="block font-display text-xs font-semibold text-[#141412] mb-1.5">
                     Project Type
                   </label>
-                  <select id="client-service" class="clean-input bg-white cursor-pointer">
+                  <select id="client-service" name="service" class="clean-input bg-white cursor-pointer">
                     <option value="Business Website">Business Website</option>
                     <option value="Landing Page">Landing Page</option>
                     <option value="Portfolio Website">Personal Portfolio Website</option>
@@ -860,19 +873,21 @@
 
                 <div>
                   <label for="client-message" class="block font-display text-xs font-semibold text-[#141412] mb-1.5">
-                    Project Overview & Goals
+                    Project Overview & Goals *
                   </label>
                   <textarea 
                     id="client-message" 
+                    name="message"
                     rows="4" 
+                    required
                     placeholder="Briefly tell me about your project, timeline, or websites you appreciate..." 
                     class="clean-input"
                   ></textarea>
                 </div>
 
-                <button type="submit" class="btn-primary w-full py-3.5">
-                  <span>Send Project Inquiry</span>
-                  <i data-lucide="send" class="w-4 h-4"></i>
+                <button type="submit" id="submit-btn" class="btn-primary w-full py-3.5">
+                  <span id="submit-text">Send Project Inquiry</span>
+                  <i data-lucide="send" id="submit-icon" class="w-4 h-4"></i>
                 </button>
               </form>
             </div>
